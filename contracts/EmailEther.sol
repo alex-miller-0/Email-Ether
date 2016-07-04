@@ -4,9 +4,9 @@ contract EmailEther {
 
     // VARIABLES:
     //--------------------------------------
-    
+
     // Address structures
-	struct Addr {
+	  struct Addr {
         address addr;
         bool exists;
     }
@@ -15,7 +15,7 @@ contract EmailEther {
     address admin;
 
     // Hash table mapping emails --> addresses
-	mapping (string => Addr) lookup;
+	  mapping (string => Addr) lookup;
 
     // Default function will set the admin of the contract to the message sender.
     // After this, the admin will be the only address that can add/remove emails
@@ -29,7 +29,7 @@ contract EmailEther {
     //--------------------------------------
 
     // Make sure the message sender is the admin.
-    modifier is_admin() { if (msg.sender == admin) _ }  
+    modifier is_admin() { if (msg.sender == admin) _ }
 
     // Make sure the admin has been declared
     modifier admin_exists() { if (admin!=0) _ }
@@ -60,10 +60,19 @@ contract EmailEther {
 
     // GETTERS:
     //--------------------------------------
-    
+
     // Get a mapping (would love to just make 'lookup' public, but that's not allowed at present.
     function getAddr(string email) email_exists(email) returns (address) {
         return lookup[email].addr;
+    }
+
+    // CALLABLE:
+    //---------------------------------------
+
+    // Send a transaction to an address given an email
+    function sendEther(string email) email_exists(email) returns (bool) {
+        lookup[email].addr.send(msg.value);
+        return true;
     }
 
 }

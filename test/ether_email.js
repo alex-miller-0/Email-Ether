@@ -1,5 +1,6 @@
 contract('EmailEther', function(accounts) {
-  var empty_addr = "0x0000000000000000000000000000000000000000"
+  var empty_addr = "0x0000000000000000000000000000000000000000";
+  var default_balance = 2126764793;
 
   it("Should create the contract and add an email as admin.", function(done) {
     // Deploy contract, setup the email and address to map to
@@ -104,5 +105,40 @@ contract('EmailEther', function(accounts) {
 
     .then(done).catch(done);
   });
+
+
+  it("Should be able to send to valid email and not to invalid email.", function(done) {
+    // Deploy contract, setup the email and address to map to
+    var ee = EmailEther.deployed();
+    var valid_email = "test@test.test";
+    var invalid_email = "notsovalid@test.test"
+    var addr = accounts[1];
+
+    // Add the email address
+    ee.AddAddress.sendTransaction(valid_email, addr).then(function(success) {})
+
+    // Make sure the email address is there
+    ee.getAddr.call(valid_email).then(function(response){
+      assert.equal(response, addr, "Email address not added to mapping.")
+    })
+
+    // Make sure balance of accounts[2] is the default
+    var initial_balance = web3.eth.getBalance(web3.eth.accounts[2]).c[0];
+    assert.equal(initial_balance, default_balance, "Balance is not set to default and should be.");
+
+    var send_amount = 1000000;
+    // Send 1000000 ether from accounts[2] to email
+    ee.sendEther.sendTransaction(valid_email, {from: accounts[2], value: send_amount})
+    .then(function(response){})
+
+    // Make sure balance was deducted
+    var new_balance = web3.eth.getBalance(web3.eth.accounts[2]).c[0];
+    console.log("old balance", initial_balance, "new balance", new_balance)
+    assert.equal(new_balance, default_balance - send_amount, "Balance was not deducted.");
+
+
+    //.then(done).catch(done);
+  });
+
 
 });
