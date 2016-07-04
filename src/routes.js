@@ -2,7 +2,7 @@ var async = require('async');
 var crypto = require('crypto');
 var levelup = require('levelup');
 var rpc = require('node-json-rpc');
-var bcrypt = require('bcrypt');
+var util = require('./util.js');
 
 // Get config
 var config = require('./config.js');
@@ -20,10 +20,14 @@ exports.send_email = function(req,res) {
     //var salt = bcrypt.genSaltSync(config.secrets.hash_rounds);
     //var hash = bcrypt.hashSync(req.body.email, salt);
     var hash = crypto.createHash('sha256').update(req.body.email).digest("hex");
-    console.log("hash", hash);
     db.put(hash, req.body.email, function(err){
         if (err) { res.send(500, {error: err}) }
-        else { res.send(200, {msg: "success"}) };
+        else {
+            util.send_email(req.body.email, hash, function(err){
+                if (err) { res.send(500, {error: err}) }
+                else { res.send(200, {msg: "success"}) }
+            });
+        };
     });
 }
 

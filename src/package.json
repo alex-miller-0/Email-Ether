@@ -13,6 +13,7 @@
   	"levelup": "latest",
     "leveldown": "latest",
     "node-json-rpc": "latest",
+    "nodemailer": "0.7.1",
   	"web3": "latest"
   }
 }
