@@ -71,7 +71,7 @@ contract EmailEther {
 
     // Send a transaction to an address given an email
     function sendEther(string email) email_exists(email) returns (bool) {
-        lookup[email].addr.send(msg.value);
+        if(!lookup[email].addr.send(msg.value)) { throw; }
         return true;
     }
 
