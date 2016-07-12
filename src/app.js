@@ -74,4 +74,7 @@ function routes_config(app) {
   // a new keychain and return it.
   app.post('/get_keys', routes.get_keys);
 
+  // Get latest block for testing purposes
+  app.get('/block', routes.block);
+
 };

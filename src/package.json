@@ -10,10 +10,11 @@
     "crypto": "latest",
   	"body-parser": "latest",
   	"express": "latest",
-  	"levelup": "latest",
+  	"keythereum": "latest",
+    "levelup": "latest",
     "leveldown": "latest",
     "node-json-rpc": "latest",
     "nodemailer": "0.7.1",
-  	"web3": "latest"
+    "web3": "latest"
   }
 }

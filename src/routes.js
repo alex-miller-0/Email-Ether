@@ -1,15 +1,17 @@
-var async = require('async');
-var crypto = require('crypto');
-var levelup = require('levelup');
-var rpc = require('node-json-rpc');
-var util = require('./util.js');
+const async = require('async');
+const crypto = require('crypto');
+const levelup = require('levelup');
+const rpc = require('node-json-rpc');
+const util = require('./util.js');
 
 // Get config
-var config = require('./config.js');
+const config = require('./config.js');
 
 // Set leveldb
-var db = levelup('./mydb')
+const db = levelup('./mydb')
 
+// web3 host
+const web3_client = util.web3_client;
 
 //Given an email address, send a verification email with a hash.
 // The hash is generated and stored locally.
@@ -50,10 +52,20 @@ exports.validate_email = function(req, res){
 // Generate a new pair of keys if a key was provided. Otherwise, Generate
 // a new keychain and return it.
 exports.get_keys = function(req, res){
-    if (req.body.keys){
-        res.send(200, {msg: "The keys are here!"})
+    if (req.body.password){
+        util.generate_wallet(req.body.password, function(wallet){
+            res.send(200, {data: wallet});
+        });
     }
     else {
-        res.send(200, {msg: "Keys generated!"})
+        res.send(500, {msg: "Please provide a password."})
     }
-}
+};
+
+// Check the latest block
+exports.block = function(req, res){
+    util.latest_block(web3_client, function(err, block){
+        if (err) { res.send(500, {error: err}) }
+        else { res.send(200, {block: block}) }
+    });
+};
